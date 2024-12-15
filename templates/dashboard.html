@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Dashboard</h1>
+            <a href="/add-transaction" class="button is-primary">Add Transaction</a>
+            <a href="/set-goal" class="button is-link">Set Goal</a>
+            <h2 class="subtitle">Your Transactions</h2>
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>${{ transaction.amount }}</td>
+                        <td>{{ transaction.type }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.note }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

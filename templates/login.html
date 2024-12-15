@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Log In</h1>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                        {{ form.email(class="input") }}
+                    </div>
+                    <p class="help is-danger">{{ form.email.errors[0] if form.email.errors }}</p>
+                </div>
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                        {{ form.password(class="input") }}
+                    </div>
+                    <p class="help is-danger">{{ form.password.errors[0] if form.password.errors }}</p>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">{{ form.submit.text }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
