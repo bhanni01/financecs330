@@ -6,15 +6,19 @@
     <title>Dashboard - Finance Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
 </head>
-<body>
-    <section class="section">
+<body style="background-color: #333; color: white;">
+    <section style="background-color: #000; color: white; padding: 2rem;">
         <div class="container">
             <h1 class="title">Dashboard</h1>
-            <a href="/add-transaction" class="button is-primary">Add Transaction</a>
-            <a href="/set-goal" class="button is-link">Set Goal</a>
-            <h2 class="subtitle">Your Transactions</h2>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <a href="/add-transaction" class="button" style="background-color: #000; color: white;">Add Transaction</a>
+            <a href="/set-goal" class="button" style="background-color: #808080; color: white;">Set Goal</a>
+            <h2 class="title">Your Transactions</h2>
             <table class="table is-striped is-fullwidth">
-                <thead>
+                <thead style="background-color: #808080; color: white;">
                     <tr>
                         <th>Amount</th>
                         <th>Type</th>
@@ -25,7 +29,7 @@
                 </thead>
                 <tbody>
                     {% for transaction in transactions %}
-                    <tr>
+                    <tr style="background-color: #444; color: white;">
                         <td>${{ transaction.amount }}</td>
                         <td>{{ transaction.type }}</td>
                         <td>{{ transaction.category }}</td>

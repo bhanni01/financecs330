@@ -6,46 +6,44 @@
     <title>Register - Finance Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
 </head>
-<body>
-    <section class="section">
-        <div class="container">
-            <h1 class="title">Register</h1>
-            <form method="POST">
-                {{ form.hidden_tag() }}
-                <div class="field">
-                    <label class="label">Username</label>
-                    <div class="control">
-                        {{ form.username(class="input") }}
-                    </div>
-                    <p class="help is-danger">{{ form.username.errors[0] if form.username.errors }}</p>
+<body style="background-color: #333; color: white;">
+    <section class="hero is-black is-fullheight is-flex is-align-items-center">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title" style="color: white;">Register</h1>
+                <div class="box" style="max-width: 500px; margin: 0 auto;">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="field">
+                            <label class="label" style="color: black;">Username</label>
+                            <div class="control">
+                                {{ form.username(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: black;">Email</label>
+                            <div class="control">
+                                {{ form.email(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: black;">Password</label>
+                            <div class="control">
+                                {{ form.password(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: black;">Confirm Password</label>
+                            <div class="control">
+                                {{ form.confirm_password(class="input") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Sign Up</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="field">
-                    <label class="label">Email</label>
-                    <div class="control">
-                        {{ form.email(class="input") }}
-                    </div>
-                    <p class="help is-danger">{{ form.email.errors[0] if form.email.errors }}</p>
-                </div>
-                <div class="field">
-                    <label class="label">Password</label>
-                    <div class="control">
-                        {{ form.password(class="input") }}
-                    </div>
-                    <p class="help is-danger">{{ form.password.errors[0] if form.password.errors }}</p>
-                </div>
-                <div class="field">
-                    <label class="label">Confirm Password</label>
-                    <div class="control">
-                        {{ form.confirm_password(class="input") }}
-                    </div>
-                    <p class="help is-danger">{{ form.confirm_password.errors[0] if form.confirm_password.errors }}</p>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">{{ form.submit.text }}</button>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </section>
 </body>
