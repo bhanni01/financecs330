@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Transaction - Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+</head>
+<body style="background-color: #333; color: white;">
+    <section class="hero is-black is-fullheight is-flex is-align-items-center">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title" style="color: white;">Add Transaction</h1>
+                <div class="box" style="max-width: 500px; margin: 0 auto;">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="field">
+                            <label class="label" style="color: white;">Amount</label>
+                            <div class="control">
+                                {{ form.amount(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: white;">Type</label>
+                            <div class="control">
+                                {{ form.type(class="select", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: white;">Category</label>
+                            <div class="control">
+                                {{ form.category(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: white;">Date</label>
+                            <div class="control">
+                                {{ form.date(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" style="color: white;">Note</label>
+                            <div class="control">
+                                {{ form.note(class="textarea", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Add Transaction</button>
+                        </div>
+                    </form>
+                    <a href="/dashboard" style="color: #808080; text-decoration: underline; margin-top: 1rem; display: inline-block;">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
