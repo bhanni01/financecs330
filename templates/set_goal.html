@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Goal - Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+</head>
+<body style="background-color: #333; color: white;">
+    <section class="hero is-black is-fullheight is-flex is-align-items-center">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title" style="color: white;">Set Financial Goal</h1>
+                <div class="box" style="max-width: 500px; margin: 0 auto;">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="field">
+                            <label for="goal_name" class="label" style="color: white;">Goal Name</label>
+                            <div class="control">
+                                {{ form.goal_name(class="input", id="goal_name", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="target_amount" class="label" style="color: white;">Target Amount</label>
+                            <div class="control">
+                                {{ form.target_amount(class="input", id="target_amount", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="due_date" class="label" style="color: white;">Due Date</label>
+                            <div class="control">
+                                {{ form.due_date(class="input", id="due_date", style="background-color: #444; color: white; border: 1px solid #555;") }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Set Goal</button>
+                        </div>
+                    </form>
+                    <a href="/dashboard" style="color: #808080; text-decoration: underline; margin-top: 1rem; display: inline-block;">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

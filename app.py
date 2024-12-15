@@ -22,6 +22,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     transactions = db.relationship('Transaction', backref='owner', lazy=True)
+    goals = db.relationship('Goal', backref='owner', lazy=True)
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,6 +31,14 @@ class Transaction(db.Model):
     category = db.Column(db.String(50), nullable=False)
     date = db.Column(db.Date, nullable=False)
     note = db.Column(db.String(200))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Goal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    goal_name = db.Column(db.String(50), nullable=False)
+    target_amount = db.Column(db.Float, nullable=False)
+    current_amount = db.Column(db.Float, default=0.0)
+    due_date = db.Column(db.Date, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 # Forms
@@ -52,6 +61,12 @@ class TransactionForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()])
     note = StringField('Note')
     submit = SubmitField('Add Transaction')
+
+class GoalForm(FlaskForm):
+    goal_name = StringField('Goal Name', validators=[DataRequired()])
+    target_amount = FloatField('Target Amount', validators=[DataRequired(), NumberRange(min=0)])
+    due_date = DateField('Due Date', validators=[DataRequired()])
+    submit = SubmitField('Set Goal')
 
 # Routes
 @app.route('/')
@@ -90,7 +105,8 @@ def dashboard():
         return redirect(url_for('login'))
     user = User.query.get(session['user_id'])
     transactions = Transaction.query.filter_by(user_id=user.id).all()
-    return render_template('dashboard.html', transactions=transactions)
+    goals = Goal.query.filter_by(user_id=user.id).all()
+    return render_template('dashboard.html', transactions=transactions, goals=goals)
 
 @app.route('/add-transaction', methods=['GET', 'POST'])
 def add_transaction():
@@ -114,6 +130,28 @@ def add_transaction():
         return redirect(url_for('dashboard'))
     
     return render_template('add_transaction.html', form=form)  # Pass the form to the template
+
+@app.route('/set-goal', methods=['GET', 'POST'])
+def set_goal():
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'danger')
+        return redirect(url_for('login'))
+    
+    form = GoalForm()  # Instantiate the form
+    if form.validate_on_submit():  # Process form submission
+        goal = Goal(
+            goal_name=form.goal_name.data,
+            target_amount=form.target_amount.data,
+            due_date=form.due_date.data,
+            user_id=session['user_id']
+        )
+        db.session.add(goal)
+        db.session.commit()
+        flash('Goal set successfully!', 'success')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('set_goal.html', form=form)  # Pass the form to the template
+
 
 @app.route('/logout')
 def logout():
