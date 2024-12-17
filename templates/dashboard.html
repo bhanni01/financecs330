@@ -9,6 +9,25 @@
 </head>
 <body style="background-color: #121212; color: #ffffff; font-family: 'Roboto', sans-serif;">
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="notification is-{{ messages[0][0] }}" style="max-width: 800px; margin: 1rem auto;">
+                {{ messages[0][1] }}
+                <button class="delete"></button>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                        $delete.addEventListener('click', () => {
+                            $delete.parentNode.parentNode.removeChild($delete.parentNode);
+                        });
+                    });
+                });
+            </script>
+        {% endif %}
+    {% endwith %}
+
     <!-- Header -->
     <section class="hero is-dark">
         <div class="hero-body">
@@ -25,36 +44,41 @@
 
             <!-- Buttons -->
             <div class="buttons">
-                <a href="/add-transaction" class="button is-success is-light">Add Transaction</a>
-                <a href="/set-goal" class="button is-link is-light">Set Goal</a>
+                <a href="{{ url_for('add_transaction') }}" class="button is-success is-light">Add Transaction</a>
+                <a href="{{ url_for('set_goal') }}" class="button is-link is-light">Set Goal</a>
+                <a href="{{ url_for('logout') }}" class="button is-danger is-light">Logout</a>
             </div>
 
             <!-- Transactions Table -->
             <h2 class="title has-text-light">Your Transactions</h2>
-            <table class="table is-fullwidth is-striped">
-                <thead>
-                    <tr style="background-color: #1b1b1b;">
-                        <th class="has-text-light">Amount</th>
-                        <th class="has-text-light">Type</th>
-                        <th class="has-text-light">Category</th>
-                        <th class="has-text-light">Date</th>
-                        <th class="has-text-light">Note</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in transactions %}
-                    <tr style="background-color: #181818;">
-                        <td style="color: {% if transaction.type == 'income' %}#4caf50{% else %}#f44336{% endif %};">
-                            ${{ transaction.amount }}
-                        </td>
-                        <td>{{ transaction.type }}</td>
-                        <td>{{ transaction.category }}</td>
-                        <td>{{ transaction.date }}</td>
-                        <td>{{ transaction.note }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if transactions %}
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr style="background-color: #1b1b1b;">
+                            <th class="has-text-light">Amount</th>
+                            <th class="has-text-light">Type</th>
+                            <th class="has-text-light">Category</th>
+                            <th class="has-text-light">Date</th>
+                            <th class="has-text-light">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr style="background-color: #181818;">
+                            <td style="color: {% if transaction.type == 'income' %}#4caf50{% else %}#f44336{% endif %};">
+                                ${{ "{:,.2f}".format(transaction.amount) }}
+                            </td>
+                            <td>{{ transaction.type.capitalize() }}</td>
+                            <td>{{ transaction.category }}</td>
+                            <td>{{ transaction.date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ transaction.note }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="has-text-light">No transactions found.</p>
+            {% endif %}
 
             <!-- Centered Pie Chart Section -->
             <h2 class="title has-text-light has-text-centered">Transaction Overview</h2>
@@ -62,7 +86,7 @@
                 <div class="box" style="background-color: #1b1b1b; border-radius: 12px; padding: 20px; width: 350px; text-align: center;">
                     <canvas id="transactionChart" style="max-width: 300px; max-height: 300px;"></canvas>
                     <p class="has-text-centered has-text-grey-light" style="margin-top: 1rem; font-size: 1.2rem;">
-                        Current Balance: <span style="color: #4caf50;">${{ current_balance }}</span>
+                        Current Balance: <span style="color: #4caf50;">${{ "{:,.2f}".format(current_balance) }}</span>
                     </p>
                 </div>
             </div>
