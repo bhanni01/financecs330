@@ -12,7 +12,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = '5bbc0ea810a44cd9d7efd8500ad47e7fcbd0ae299780088fc27abca953adff73'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///finance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -21,6 +21,8 @@ bcrypt = Bcrypt(app)
 
 STATIC_DIR = os.path.join(app.root_path, 'static')
 os.makedirs(STATIC_DIR, exist_ok=True)
+
+# models
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,6 +48,10 @@ class Goal(db.Model):
     current_amount = db.Column(db.Float, default=0.0)
     due_date = db.Column(db.Date, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+#forms
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
@@ -73,9 +79,13 @@ class GoalForm(FlaskForm):
     due_date = DateField('Due Date', validators=[DataRequired()], default=datetime.today)
     submit = SubmitField('Set Goal')
 
+
+#routes
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -95,6 +105,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user_id' in session:
@@ -109,6 +120,7 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', form=form)
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -140,6 +152,7 @@ def dashboard():
         plt.close()
     return render_template('dashboard.html', transactions=transactions, income_data=income_data, expense_data=expense_data, current_balance=current_balance)
 
+
 @app.route('/add-transaction', methods=['GET', 'POST'])
 def add_transaction():
     if 'user_id' not in session:
@@ -153,6 +166,7 @@ def add_transaction():
         flash('Transaction added successfully!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('add_transaction.html', form=form)
+
 
 @app.route('/set-goal', methods=['GET', 'POST'])
 def set_goal():
@@ -168,6 +182,7 @@ def set_goal():
         return redirect(url_for('dashboard'))
     return render_template('set_goal.html', form=form)
 
+
 @app.route('/goals_viewer')
 def goals_viewer():
     if 'user_id' not in session:
@@ -177,18 +192,22 @@ def goals_viewer():
     goals_data = [{"goal_id": row.goal_id, "goal_name": row.goal_name, "target_amount": row.target_amount, "current_amount": row.current_amount, "due_date": row.due_date.strftime('%Y-%m-%d'), "owner_name": row.owner_name} for row in results]
     return render_template('goals_viewer.html', goals=goals_data)
 
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
 
+
 @app.route('/news')
 def news():
     return render_template('news.html')
 
+
 def create_tables():
     db.create_all()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
