@@ -2,7 +2,7 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
+import dotenv
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -12,7 +12,8 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '5bbc0ea810a44cd9d7efd8500ad47e7fcbd0ae299780088fc27abca953adff73'
+app.config.from_prefixed_env()
+app.config['SECRET_KEY'] 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///finance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -51,7 +52,6 @@ class Goal(db.Model):
 
 
 #forms
-
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
