@@ -28,6 +28,7 @@ os.makedirs(STATIC_DIR, exist_ok=True)
 
 # Models
 class User(db.Model):
+    # __tablename__= 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -36,6 +37,7 @@ class User(db.Model):
     goals = db.relationship('Goal', backref='owner', lazy=True)
 
 class Transaction(db.Model):
+    # __tablename__= 'transactions'
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(10), nullable=False)  # 'income' or 'expense'
@@ -45,6 +47,7 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 class Goal(db.Model):
+    # __tablename__= 'goals'
     id = db.Column(db.Integer, primary_key=True)
     goal_name = db.Column(db.String(50), nullable=False)
     target_amount = db.Column(db.Float, nullable=False)
@@ -225,6 +228,44 @@ def set_goal():
         return redirect(url_for('dashboard'))
     
     return render_template('set_goal.html', form=form)
+
+@app.route('/goals_viewer')
+def goals_viewer():
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'danger')
+        return redirect(url_for('login'))
+
+    try:
+        # Query goals and join with the user table
+        results = db.session.query(
+            Goal.id.label('goal_id'),
+            Goal.goal_name,
+            Goal.target_amount,
+            Goal.current_amount,
+            Goal.due_date,
+            User.username.label('owner_name')
+        ).join(User, Goal.user_id == User.id).filter(
+            User.id == session['user_id']
+        ).order_by(Goal.due_date.asc()).all()
+
+        # Transform query results into the desired structure
+        goals_data = [
+            {
+                "goal_id": row.goal_id,
+                "goal_name": row.goal_name,
+                "target_amount": row.target_amount,
+                "current_amount": row.current_amount,
+                "due_date": row.due_date.strftime('%Y-%m-%d'),
+                "owner_name": row.owner_name
+            }
+            for row in results
+        ]
+
+        return render_template('goals_viewer.html', goals=goals_data)
+    
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}", "danger")
+        return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():

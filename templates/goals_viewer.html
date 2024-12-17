@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goals Viewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+</head>
+<body style="background-color: #121212; color: #ffffff; font-family: 'Roboto', sans-serif;">
+
+    <section class="hero is-dark">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title has-text-light">Goals Viewer</h1>
+                <h2 class="subtitle has-text-grey-light">Track your goals and progress</h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="title has-text-light">Your Goals</h2>
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr style="background-color: #1b1b1b;">
+                        <th class="has-text-light">Goal Name</th>
+                        <th class="has-text-light">Target Amount</th>
+                        <th class="has-text-light">Current Amount</th>
+                        <th class="has-text-light">Due Date</th>
+                        <th class="has-text-light">Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for goal in goals %}
+                    <tr style="background-color: white;">
+                        <td>{{ goal.goal_name }}</td>
+                        <td>${{ goal.target_amount }}</td>
+                        <td>${{ goal.current_amount }}</td>
+                        <td>{{ goal.due_date }}</td>
+                        <td>{{ goal.owner_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="/dashboard" class="button is-link is-light">Back to Dashboard</a>
+        </div>
+    </section>
+
+</body>
+</html>

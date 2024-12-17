@@ -32,10 +32,14 @@
             background-color: #E57373;
             border: none;
         }
+        .button.is-info {
+            background-color: #64B5F6;
+            border: none;
+        }
         .button:hover {
             opacity: 0.9;
         }
-        table {
+        /* table {
             background-color: #2C2C3C;
             color: #2C2C3C;
         }
@@ -47,7 +51,7 @@
         }
         td {
             color: #E0E0E0;
-        }
+        } */
         .box {
             background-color: #2C2C3C;
             border-radius: 12px;
@@ -71,9 +75,11 @@
     <section class="section">
         <div class="container">
             <div class="buttons">
-                <a href="{{ url_for('add_transaction') }}" class="button is-success">Add Transaction</a>
-                <a href="{{ url_for('set_goal') }}" class="button is-link">Set Goal</a>
-                <a href="{{ url_for('logout') }}" class="button is-danger">Logout</a>
+               
+                    <a href="/add-transaction" class="button is-success is-light">Add Transaction</a>
+                    <a href="/set-goal" class="button is-link is-light">Set Goal</a>
+                    <a href="{{ url_for('goals_viewer') }}" class="button is-info is-light">View Goals</a>
+                    <a href="{{ url_for('logout') }}" class="button is-danger">Logout</a>
             </div>
             <h2 class="title">Your Transactions</h2>
             {% if transactions %}
@@ -90,7 +96,7 @@
                     <tbody>
                         {% for transaction in transactions %}
                         <tr>
-                            <td style="color: {% if transaction.type == 'income' %}#81C784{% else %}#E57373{% endif %};">
+                            <td>
                                 ${{ "{:,.2f}".format(transaction.amount) }}
                             </td>
                             <td>{{ transaction.type.capitalize() }}</td>
@@ -112,8 +118,6 @@
                         Current Balance: ${{ "{:,.2f}".format(current_balance) }}
                     </p>
                 </div>
-            </div>
-        </div>
     </section>
     <script>
         const incomeData = {{ income_data | tojson }};

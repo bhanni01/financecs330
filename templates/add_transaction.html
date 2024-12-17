@@ -6,49 +6,74 @@
     <title>Add Transaction - Finance Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
 </head>
-<body style="background-color: #333; color: white;">
-    <section class="hero is-black is-fullheight is-flex is-align-items-center">
+<body class="has-background-dark has-text-white">
+    <section class="hero is-fullheight">
         <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title" style="color: black;">Add Transaction</h1>
-                <div class="box" style="max-width: 500px; margin: 0 auto;">
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-                        <div class="field">
-                            <label class="label" style="color: black;">Amount</label>
-                            <div class="control">
-                                {{ form.amount(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-half">
+                        <!-- Title -->
+                        <h1 class="title has-text-centered has-text-light">Add Transaction</h1>
+
+                        <!-- Form Box -->
+                        <div class="box">
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                
+                                <!-- Amount Field -->
+                                <div class="field">
+                                    <label class="label">Amount</label>
+                                    <div class="control">
+                                        {{ form.amount(class="input is-dark") }}
+                                    </div>
+                                </div>
+
+                                <!-- Type Field -->
+                                <div class="field">
+                                    <label class="label">Type</label>
+                                    <div class="control">
+                                        {{ form.type(class="select is-dark") }}
+                                    </div>
+                                </div>
+
+                                <!-- Category Field -->
+                                <div class="field">
+                                    <label class="label">Category</label>
+                                    <div class="control">
+                                        {{ form.category(class="input is-dark") }}
+                                    </div>
+                                </div>
+
+                                <!-- Date Field -->
+                                <div class="field">
+                                    <label class="label">Date</label>
+                                    <div class="control">
+                                        {{ form.date(class="input is-dark") }}
+                                    </div>
+                                </div>
+
+                                <!-- Note Field -->
+                                <div class="field">
+                                    <label class="label">Note</label>
+                                    <div class="control">
+                                        {{ form.note(class="textarea is-dark") }}
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="field">
+                                    <button type="submit" class="button is-dark is-fullwidth">
+                                        Add Transaction
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Back to Dashboard Link -->
+                            <div class="has-text-centered mt-4">
+                                <a href="/dashboard" class="has-text-grey-light">Back to Dashboard</a>
                             </div>
                         </div>
-                        <div class="field">
-                            <label class="label" style="color: black;">Type</label>
-                            <div class="control">
-                                {{ form.type(class="select", style="background-color: #444; color: white; border: 1px solid #555;") }}
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="color: black;">Category</label>
-                            <div class="control">
-                                {{ form.category(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="color: black;">Date</label>
-                            <div class="control">
-                                {{ form.date(class="input", style="background-color: #444; color: white; border: 1px solid #555;") }}
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label" style="color: black;">Note</label>
-                            <div class="control">
-                                {{ form.note(class="textarea", style="background-color: #444; color: white; border: 1px solid #555;") }}
-                            </div>
-                        </div>
-                        <div class="field">
-                            <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Add Transaction</button>
-                        </div>
-                    </form>
-                    <a href="/dashboard" style="color: #808080; text-decoration: underline; margin-top: 1rem; display: inline-block;">Back to Dashboard</a>
+                    </div>
                 </div>
             </div>
         </div>
