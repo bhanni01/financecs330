@@ -5,32 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Finance Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body style="background-color: #333; color: white;">
-    <section style="background-color: #000; color: white; padding: 2rem;">
-        <div class="container">
-            <h1 class="title">Dashboard</h1>
+<body style="background-color: #121212; color: #ffffff; font-family: 'Roboto', sans-serif;">
+
+    <!-- Header -->
+    <section class="hero is-dark">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title has-text-light">Finance Tracker Dashboard</h1>
+                <h2 class="subtitle has-text-grey-light">Track your finances and reach your goals</h2>
+            </div>
         </div>
     </section>
+
+    <!-- Main Content -->
     <section class="section">
         <div class="container">
-            <a href="/add-transaction" class="button" style="background-color: #000; color: white;">Add Transaction</a>
-            <a href="/set-goal" class="button" style="background-color: #808080; color: white;">Set Goal</a>
-            <h2 class="title">Your Transactions</h2>
-            <table class="table is-striped is-fullwidth">
-                <thead style="background-color: #808080; color: white;">
-                    <tr>
-                        <th>Amount</th>
-                        <th>Type</th>
-                        <th>Category</th>
-                        <th>Date</th>
-                        <th>Note</th>
+
+            <!-- Buttons -->
+            <div class="buttons">
+                <a href="/add-transaction" class="button is-success is-light">Add Transaction</a>
+                <a href="/set-goal" class="button is-link is-light">Set Goal</a>
+            </div>
+
+            <!-- Transactions Table -->
+            <h2 class="title has-text-light">Your Transactions</h2>
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr style="background-color: #1b1b1b;">
+                        <th class="has-text-light">Amount</th>
+                        <th class="has-text-light">Type</th>
+                        <th class="has-text-light">Category</th>
+                        <th class="has-text-light">Date</th>
+                        <th class="has-text-light">Note</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for transaction in transactions %}
-                    <tr style="background-color: #444; color: white;">
-                        <td>${{ transaction.amount }}</td>
+                    <tr style="background-color: #181818;">
+                        <td style="color: {% if transaction.type == 'income' %}#4caf50{% else %}#f44336{% endif %};">
+                            ${{ transaction.amount }}
+                        </td>
                         <td>{{ transaction.type }}</td>
                         <td>{{ transaction.category }}</td>
                         <td>{{ transaction.date }}</td>
@@ -39,7 +55,75 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <!-- Centered Pie Chart Section -->
+            <h2 class="title has-text-light has-text-centered">Transaction Overview</h2>
+            <div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 2rem;">
+                <div class="box" style="background-color: #1b1b1b; border-radius: 12px; padding: 20px; width: 350px; text-align: center;">
+                    <canvas id="transactionChart" style="max-width: 300px; max-height: 300px;"></canvas>
+                    <p class="has-text-centered has-text-grey-light" style="margin-top: 1rem; font-size: 1.2rem;">
+                        Current Balance: <span style="color: #4caf50;">${{ current_balance }}</span>
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- Chart.js Script -->
+    <script>
+        // Data for Pie Chart
+        const incomeData = {{ income_data | tojson }};
+        const expenseData = {{ expense_data | tojson }};
+        const totalIncome = incomeData.reduce((a, b) => a + b, 0);
+        const totalExpense = expenseData.reduce((a, b) => a + b, 0);
+        const chartData = {
+            labels: ['Income', 'Expense'],
+            datasets: [{
+                label: 'Transaction Overview',
+                data: [totalIncome, totalExpense],
+                backgroundColor: [
+                    'rgba(76, 175, 80, 0.7)', // Green
+                    'rgba(244, 67, 54, 0.7)'  // Red
+                ],
+                borderColor: [
+                    'rgba(76, 175, 80, 1)', 
+                    'rgba(244, 67, 54, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Chart Configuration
+        const config = {
+            type: 'doughnut',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: $${value.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                cutout: '50%'
+            }
+        };
+
+        // Render the Chart
+        const ctx = document.getElementById('transactionChart').getContext('2d');
+        new Chart(ctx, config);
+    </script>
+
 </body>
 </html>
