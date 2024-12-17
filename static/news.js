@@ -1,5 +1,5 @@
-
-const API_URL = `https://finnhub.io/api/v1/news?category=general&token=${ctgrfi1r01qhfodhmj8gctgrfi1r01qhfodhmj90}`;
+const API_KEY = 'ctgrfi1r01qhfodhmj8gctgrfi1r01qhfodhmj90'; 
+const API_URL = `https://finnhub.io/api/v1/news?category=general&token=${API_KEY}`;
 
 async function fetchNews() {
     try {
