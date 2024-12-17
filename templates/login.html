@@ -33,6 +33,17 @@
                             <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Log In</button>
                         </div>
                     </form>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="notification is-danger" style="max-width: 400px; margin: 0 auto; margin-top: 10px;">
+                                {% for category, message in messages %}
+                                    {% if category == 'danger' %}
+                                        <p>{{ message }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <p style="margin-top: 1rem; color: black;">Don't have an account? <a href="/register" style="color: #808080;">Sign Up</a></p>
                 </div>
             </div>
