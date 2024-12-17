@@ -273,7 +273,12 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
 
-# Initialize the database before the first request
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+
+
 
 def create_tables():
     db.create_all()

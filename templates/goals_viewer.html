@@ -6,7 +6,7 @@
     <title>Goals Viewer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
 </head>
-<body style="background-color: #121212; color: #ffffff; font-family: 'Roboto', sans-serif;">
+<body style="background-color: #f5f5f5; color: #363636; font-family: 'Roboto', sans-serif;">
 
     <section class="hero is-dark">
         <div class="hero-body">
@@ -19,30 +19,35 @@
 
     <section class="section">
         <div class="container">
-            <h2 class="title has-text-light">Your Goals</h2>
-            <table class="table is-fullwidth is-striped">
-                <thead>
-                    <tr style="background-color: #1b1b1b;">
-                        <th class="has-text-light">Goal Name</th>
-                        <th class="has-text-light">Target Amount</th>
-                        <th class="has-text-light">Current Amount</th>
-                        <th class="has-text-light">Due Date</th>
-                        <th class="has-text-light">Owner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for goal in goals %}
-                    <tr style="background-color: white;">
-                        <td>{{ goal.goal_name }}</td>
-                        <td>${{ goal.target_amount }}</td>
-                        <td>${{ goal.current_amount }}</td>
-                        <td>{{ goal.due_date }}</td>
-                        <td>{{ goal.owner_name }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <a href="/dashboard" class="button is-link is-light">Back to Dashboard</a>
+            <div class="buttons is-right">
+                <a href="/dashboard" class="button is-danger is-light" style="border-radius: 8px;">Back to Dashboard</a>
+            </div>
+
+            <h2 class="title has-text-dark">Your Goals</h2>
+            <div class="box" style="background-color: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr style="background-color: #f0f0f0;">
+                            <th class="has-text-dark">Goal Name</th>
+                            <th class="has-text-dark">Target Amount</th>
+                            <th class="has-text-dark">Current Amount</th>
+                            <th class="has-text-dark">Due Date</th>
+                            <th class="has-text-dark">Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for goal in goals %}
+                        <tr style="background-color: #ffffff;">
+                            <td>{{ goal.goal_name }}</td>
+                            <td>${{ "%.2f"|format(goal.target_amount) }}</td>
+                            <td>${{ "%.2f"|format(goal.current_amount) }}</td>
+                            <td>{{ goal.due_date }}</td>
+                            <td>{{ goal.owner_name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 
