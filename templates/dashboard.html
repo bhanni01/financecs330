@@ -6,66 +6,91 @@
     <title>Dashboard - Finance Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../style/style.css">
+    <style>
+        body {
+            background-color: #d7dbdd;
+            color: #E0E0E0;
+            font-family: 'Roboto', sans-serif;
+        }
+        .hero {
+            background-color: #2C2C3C;
+            color: #F0F0F0;
+        }
+        .subtitle {
+            color: #A0A0A0;
+        }
+        .button.is-success {
+            background-color: #4DB6AC;
+            border: none;
+        }
+        .button.is-link {
+            background-color: #9575CD;
+            border: none;
+        }
+        .button.is-danger {
+            background-color: #E57373;
+            border: none;
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+        table {
+            background-color: #2C2C3C;
+            color: #2C2C3C;
+        }
+        thead {
+            background-color: #3A3A4A;
+        }
+        tr {
+            background-color: #2C2C3C;
+        }
+        td {
+            color: #E0E0E0;
+        }
+        .box {
+            background-color: #2C2C3C;
+            border-radius: 12px;
+        }
+        .current-balance {
+            color: #81C784;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
-<body style="background-color: #121212; color: #ffffff; font-family: 'Roboto', sans-serif;">
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="notification is-{{ messages[0][0] }}" style="max-width: 800px; margin: 1rem auto;">
-                {{ messages[0][1] }}
-                <button class="delete"></button>
-            </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-                        $delete.addEventListener('click', () => {
-                            $delete.parentNode.parentNode.removeChild($delete.parentNode);
-                        });
-                    });
-                });
-            </script>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Header -->
-    <section class="hero is-dark">
+<body>
+    <section class="hero">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title has-text-light">Finance Tracker Dashboard</h1>
-                <h2 class="subtitle has-text-grey-light">Track your finances and reach your goals</h2>
+                <h1 class="title">Finance Tracker Dashboard</h1>
+                <h2 class="subtitle">Track your finances and reach your goals</h2>
             </div>
         </div>
     </section>
-
-    <!-- Main Content -->
     <section class="section">
         <div class="container">
-
-            <!-- Buttons -->
             <div class="buttons">
-                <a href="{{ url_for('add_transaction') }}" class="button is-success is-light">Add Transaction</a>
-                <a href="{{ url_for('set_goal') }}" class="button is-link is-light">Set Goal</a>
-                <a href="{{ url_for('logout') }}" class="button is-danger is-light">Logout</a>
+                <a href="{{ url_for('add_transaction') }}" class="button is-success">Add Transaction</a>
+                <a href="{{ url_for('set_goal') }}" class="button is-link">Set Goal</a>
+                <a href="{{ url_for('logout') }}" class="button is-danger">Logout</a>
             </div>
-
-            <!-- Transactions Table -->
-            <h2 class="title has-text-light">Your Transactions</h2>
+            <h2 class="title">Your Transactions</h2>
             {% if transactions %}
                 <table class="table is-fullwidth is-striped">
                     <thead>
-                        <tr style="background-color: #1b1b1b;">
-                            <th class="has-text-light">Amount</th>
-                            <th class="has-text-light">Type</th>
-                            <th class="has-text-light">Category</th>
-                            <th class="has-text-light">Date</th>
-                            <th class="has-text-light">Note</th>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Note</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
-                        <tr style="background-color: #181818;">
-                            <td style="color: {% if transaction.type == 'income' %}#4caf50{% else %}#f44336{% endif %};">
+                        <tr>
+                            <td style="color: {% if transaction.type == 'income' %}#81C784{% else %}#E57373{% endif %};">
                                 ${{ "{:,.2f}".format(transaction.amount) }}
                             </td>
                             <td>{{ transaction.type.capitalize() }}</td>
@@ -77,77 +102,43 @@
                     </tbody>
                 </table>
             {% else %}
-                <p class="has-text-light">No transactions found.</p>
+                <p>No transactions found.</p>
             {% endif %}
-
-            <!-- Centered Pie Chart Section -->
-            <h2 class="title has-text-light has-text-centered">Transaction Overview</h2>
-            <div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 2rem;">
-                <div class="box" style="background-color: #1b1b1b; border-radius: 12px; padding: 20px; width: 350px; text-align: center;">
-                    <canvas id="transactionChart" style="max-width: 300px; max-height: 300px;"></canvas>
-                    <p class="has-text-centered has-text-grey-light" style="margin-top: 1rem; font-size: 1.2rem;">
-                        Current Balance: <span style="color: #4caf50;">${{ "{:,.2f}".format(current_balance) }}</span>
+            <h2 class="title has-text-centered">Transaction Overview</h2>
+            <div class="is-flex is-justify-content-center">
+                <div class="box">
+                    <canvas id="transactionChart" style="max-width: 300px;"></canvas>
+                    <p class="has-text-centered current-balance">
+                        Current Balance: ${{ "{:,.2f}".format(current_balance) }}
                     </p>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Chart.js Script -->
     <script>
-        // Data for Pie Chart
         const incomeData = {{ income_data | tojson }};
         const expenseData = {{ expense_data | tojson }};
         const totalIncome = incomeData.reduce((a, b) => a + b, 0);
         const totalExpense = expenseData.reduce((a, b) => a + b, 0);
-        const chartData = {
-            labels: ['Income', 'Expense'],
-            datasets: [{
-                label: 'Transaction Overview',
-                data: [totalIncome, totalExpense],
-                backgroundColor: [
-                    'rgba(76, 175, 80, 0.7)', // Green
-                    'rgba(244, 67, 54, 0.7)'  // Red
-                ],
-                borderColor: [
-                    'rgba(76, 175, 80, 1)', 
-                    'rgba(244, 67, 54, 1)'
-                ],
-                borderWidth: 1
-            }]
-        };
-
-        // Chart Configuration
-        const config = {
+        const ctx = document.getElementById('transactionChart').getContext('2d');
+        new Chart(ctx, {
             type: 'doughnut',
-            data: chartData,
+            data: {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    data: [totalIncome, totalExpense],
+                    backgroundColor: ['#81C784', '#E57373']
+                }]
+            },
             options: {
-                responsive: true,
                 plugins: {
                     legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#ffffff'
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                return `${label}: $${value.toFixed(2)}`;
-                            }
-                        }
+                        labels: { color: '#E0E0E0' }
                     }
                 },
                 cutout: '50%'
             }
-        };
-
-        // Render the Chart
-        const ctx = document.getElementById('transactionChart').getContext('2d');
-        new Chart(ctx, config);
+        });
     </script>
-
 </body>
 </html>
