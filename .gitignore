@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+ 
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+ 
+# Flask instance folder (contains local SQLite db, secrets)
+instance/
+ 
+# Environment variables
+.env
+.flaskenv
+ 
+# Pytest / Playwright
+.pytest_cache/
+test-results/
+playwright-report/
+.cache/
+ 
+# OS files
+.DS_Store
+Thumbs.db
+ 
+# IDE
+.vscode/
+.idea/
+ 
+# Distribution / build
+build/
+dist/
+*.egg-info/
+ 
+# Logs
+*.log
