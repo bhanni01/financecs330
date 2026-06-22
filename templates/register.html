@@ -19,25 +19,30 @@
                             <div class="control">
                                 {{ form.username(class="input") }}
                             </div>
+                            {% for error in form.username.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
                         </div>
                         <div class="field">
                             <label class="label" style="color: black;">Email</label>
                             <div class="control">
                                 {{ form.email(class="input") }}
                             </div>
+                            {% for error in form.email.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
                         </div>
                         <div class="field">
                             <label class="label" style="color: black;">Password</label>
                             <div class="control">
                                 {{ form.password(class="input") }}
                             </div>
+                            {% for error in form.password.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
                         </div>
                         <div class="field">
                             <label class="label" style="color: black;">Confirm Password</label>
                             <div class="control">
                                 {{ form.confirm_password(class="input") }}
                             </div>
+                            {% for error in form.confirm_password.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
                         </div>
+                        {% if form.csrf_token %}{% for error in form.csrf_token.errors %}<p class="help is-danger">CSRF: {{ error }}</p>{% endfor %}{% endif %}
                         <div class="field">
                             <button type="submit" class="button is-fullwidth" style="background-color: #000; color: white;">Sign Up</button>
                         </div>

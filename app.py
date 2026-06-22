@@ -3,6 +3,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import dotenv
+dotenv.load_dotenv()
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -13,8 +14,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_prefixed_env()
-app.config['SECRET_KEY'] 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///finance.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-change-in-prod')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'sqlite:///' + os.path.join(app.instance_path, 'finance.db')
+)
+os.makedirs(app.instance_path, exist_ok=True)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -77,6 +82,9 @@ class GoalForm(FlaskForm):
     goal_name = StringField('Goal Name', validators=[DataRequired()])
     target_amount = FloatField('Target Amount', validators=[DataRequired(), NumberRange(min=0)])
     due_date = DateField('Due Date', validators=[DataRequired()], default=datetime.today)
+
+class DeleteForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Set Goal')
 
 
@@ -103,6 +111,8 @@ def register():
         db.session.commit()
         flash('Your account has been created! You can now log in.', 'success')
         return redirect(url_for('login'))
+    if request.method == 'POST':
+        app.logger.error('Register form errors: %s', form.errors)
     return render_template('register.html', form=form)
 
 
@@ -119,6 +129,8 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password.', 'danger')
+    if request.method == 'POST':
+        app.logger.error('Login form errors: %s', form.errors)
     return render_template('login.html', form=form)
 
 
@@ -150,7 +162,8 @@ def dashboard():
         plt.tight_layout()
         plt.savefig(chart_path)
         plt.close()
-    return render_template('dashboard.html', transactions=transactions, income_data=income_data, expense_data=expense_data, current_balance=current_balance)
+    delete_form = DeleteForm()
+    return render_template('dashboard.html', transactions=transactions, income_data=income_data, expense_data=expense_data, current_balance=current_balance, delete_form=delete_form)
 
 
 @app.route('/add-transaction', methods=['GET', 'POST'])
@@ -190,7 +203,44 @@ def goals_viewer():
         return redirect(url_for('login'))
     results = db.session.query(Goal.id.label('goal_id'), Goal.goal_name, Goal.target_amount, Goal.current_amount, Goal.due_date, User.username.label('owner_name')).join(User, Goal.user_id == User.id).filter(User.id == session['user_id']).order_by(Goal.due_date.asc()).all()
     goals_data = [{"goal_id": row.goal_id, "goal_name": row.goal_name, "target_amount": row.target_amount, "current_amount": row.current_amount, "due_date": row.due_date.strftime('%Y-%m-%d'), "owner_name": row.owner_name} for row in results]
-    return render_template('goals_viewer.html', goals=goals_data)
+    delete_form = DeleteForm()
+    return render_template('goals_viewer.html', goals=goals_data, delete_form=delete_form)
+
+
+@app.route('/delete-transaction/<int:transaction_id>', methods=['POST'])
+def delete_transaction(transaction_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    form = DeleteForm()
+    if form.validate_on_submit():
+        user = User.query.get(session['user_id'])
+        if not bcrypt.check_password_hash(user.password, form.password.data):
+            flash('Incorrect password. Transaction not deleted.', 'danger')
+            return redirect(url_for('dashboard'))
+        transaction = Transaction.query.filter_by(id=transaction_id, user_id=user.id).first()
+        if transaction:
+            db.session.delete(transaction)
+            db.session.commit()
+            flash('Transaction deleted.', 'success')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/delete-goal/<int:goal_id>', methods=['POST'])
+def delete_goal(goal_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    form = DeleteForm()
+    if form.validate_on_submit():
+        user = User.query.get(session['user_id'])
+        if not bcrypt.check_password_hash(user.password, form.password.data):
+            flash('Incorrect password. Goal not deleted.', 'danger')
+            return redirect(url_for('goals_viewer'))
+        goal = Goal.query.filter_by(id=goal_id, user_id=user.id).first()
+        if goal:
+            db.session.delete(goal)
+            db.session.commit()
+            flash('Goal deleted.', 'success')
+    return redirect(url_for('goals_viewer'))
 
 
 @app.route('/logout')
@@ -207,6 +257,9 @@ def news():
 
 def create_tables():
     db.create_all()
+
+with app.app_context():
+    create_tables()
 
 
 if __name__ == '__main__':

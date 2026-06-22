@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.pytest_cache/
+tests/
+playwright-report/
+test-results/
+.env
+instance/
+.DS_Store
+README.md

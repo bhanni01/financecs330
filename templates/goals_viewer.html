@@ -23,6 +23,14 @@
                 <a href="/dashboard" class="button is-danger is-light" style="border-radius: 8px;">Back to Dashboard</a>
             </div>
 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification is-{{ category }} is-light">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <h2 class="title has-text-dark">Your Goals</h2>
             <div class="box" style="background-color: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
                 <table class="table is-fullwidth is-striped">
@@ -33,6 +41,7 @@
                             <th class="has-text-dark">Current Amount</th>
                             <th class="has-text-dark">Due Date</th>
                             <th class="has-text-dark">Owner</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,13 +52,56 @@
                             <td>${{ "%.2f"|format(goal.current_amount) }}</td>
                             <td>{{ goal.due_date }}</td>
                             <td>{{ goal.owner_name }}</td>
+                            <td>
+                                <button class="button is-danger is-small"
+                                    onclick="openDeleteModal('/delete-goal/{{ goal.goal_id }}')">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+
+            <!-- Password confirmation modal -->
+            <div class="modal" id="deleteModal">
+                <div class="modal-background" onclick="closeDeleteModal()"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Confirm Delete</p>
+                        <button class="delete" onclick="closeDeleteModal()"></button>
+                    </header>
+                    <form id="deleteForm" method="POST">
+                        {{ delete_form.hidden_tag() }}
+                        <section class="modal-card-body">
+                            <p>Enter your password to confirm deletion.</p>
+                            <div class="field" style="margin-top: 1rem;">
+                                <div class="control">
+                                    {{ delete_form.password(class="input", placeholder="Your password", type="password") }}
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button type="submit" class="button is-danger">Delete</button>
+                            <button type="button" class="button" onclick="closeDeleteModal()">Cancel</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
+
+    <script>
+        function openDeleteModal(action) {
+            document.getElementById('deleteForm').action = action;
+            document.getElementById('deleteModal').classList.add('is-active');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('is-active');
+            document.getElementById('deleteForm').reset();
+        }
+    </script>
 
 </body>
 </html>

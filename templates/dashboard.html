@@ -28,6 +28,14 @@
                     <a href="{{ url_for('logout') }}" class="button is-danger">Logout</a>
                     <a href="/news" class="button is-primary is-light" style="border-radius: 8px;">View Finance News</a>
             </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification is-{{ category }} is-light">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <h2 class="title">Your Transactions</h2>
             {% if transactions %}
                 <table class="table is-fullwidth is-striped">
@@ -38,18 +46,23 @@
                             <th>Category</th>
                             <th>Date</th>
                             <th>Note</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
                         <tr>
-                            <td>
-                                ${{ "{:,.2f}".format(transaction.amount) }}
-                            </td>
+                            <td>${{ "{:,.2f}".format(transaction.amount) }}</td>
                             <td>{{ transaction.type.capitalize() }}</td>
                             <td>{{ transaction.category }}</td>
                             <td>{{ transaction.date.strftime('%Y-%m-%d') }}</td>
                             <td>{{ transaction.note }}</td>
+                            <td>
+                                <button class="button is-danger is-small"
+                                    onclick="openDeleteModal('/delete-transaction/{{ transaction.id }}')">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -57,6 +70,32 @@
             {% else %}
                 <p>No transactions found.</p>
             {% endif %}
+
+            <!-- Password confirmation modal -->
+            <div class="modal" id="deleteModal">
+                <div class="modal-background" onclick="closeDeleteModal()"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Confirm Delete</p>
+                        <button class="delete" onclick="closeDeleteModal()"></button>
+                    </header>
+                    <form id="deleteForm" method="POST">
+                        {{ delete_form.hidden_tag() }}
+                        <section class="modal-card-body">
+                            <p>Enter your password to confirm deletion.</p>
+                            <div class="field" style="margin-top: 1rem;">
+                                <div class="control">
+                                    {{ delete_form.password(class="input", placeholder="Your password", type="password") }}
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button type="submit" class="button is-danger">Delete</button>
+                            <button type="button" class="button" onclick="closeDeleteModal()">Cancel</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
             <h2 class="title has-text-centered">Transaction Overview</h2>
             <div class="is-flex is-justify-content-center">
                 <div class="box">
@@ -66,6 +105,16 @@
                     </p>
                 </div>
     </section>
+    <script>
+        function openDeleteModal(action) {
+            document.getElementById('deleteForm').action = action;
+            document.getElementById('deleteModal').classList.add('is-active');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('is-active');
+            document.getElementById('deleteForm').reset();
+        }
+    </script>
     <script>
         const incomeData = {{ income_data | tojson }};
         const expenseData = {{ expense_data | tojson }};
