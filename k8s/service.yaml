@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: finance-service
+spec:
+  type: NodePort            # exposes the app on a port of the cluster node,
+                            # so we can reach it from the Mac for local testing
+  selector:
+    app: finance           # route traffic to pods labeled app=finance
+  ports:
+    - port: 80             # the Service's own port (inside the cluster)
+      targetPort: 5000     # forward to containerPort 5000 (gunicorn)
+      nodePort: 30080      # the external port on the node (we'll use this to reach it)

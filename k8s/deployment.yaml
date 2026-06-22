@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-app
+  labels:
+    app: finance
+spec:
+  replicas: 1                 # how many copies of the app to keep running
+  selector:
+    matchLabels:
+      app: finance            # this Deployment manages pods with label app=finance
+  template:                   # the "template" describes each pod it creates
+    metadata:
+      labels:
+        app: finance          # pods get this label (matches selector above)
+    spec:
+      containers:
+        - name: finance
+          image: financecs330:latest
+          imagePullPolicy: IfNotPresent   # use the image we loaded into kind,
+                                          # don't try to pull from a remote registry
+          ports:
+            - containerPort: 5000          # the port gunicorn listens on
+          envFrom:
+            - secretRef:
+                name: finance-secrets      # inject all keys from our Secret as env vars
