@@ -191,11 +191,11 @@ Cluster nodes:
 
 GitHub Actions CI/CD pipeline overview:
 
-![GitHub Actions CI/CD pipeline](docs/screenshots/cicd-pipeline.png)
+![GitHub Actions CI/CD pipeline](docs/screenshots/github%20ci/cd%20detail.png)
 
 CD workflow deploy-to-EKS steps:
 
-![CD deploy steps](docs/screenshots/cd-deploy-detail.png)
+![CD deploy steps](docs/screenshots/github%20cd%20detail.png)
 
 ---
 
