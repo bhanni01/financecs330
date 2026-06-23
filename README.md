@@ -24,17 +24,17 @@ The application is a multi-user personal finance tracker. Key features:
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Application | Python 3.12, Flask 3, SQLAlchemy, Flask-WTF, Flask-Bcrypt, matplotlib |
-| WSGI server | gunicorn |
-| Database | SQLite (default) / any `DATABASE_URL`-compatible DB |
-| Testing | pytest |
-| Containerization | Docker (python:3.12-slim base) |
-| CI | GitHub Actions |
-| Image registry | Amazon ECR |
-| Orchestration | Kubernetes (kind locally, AWS EKS in the cloud) |
-| Infrastructure-as-Code | Terraform (AWS VPC + EKS modules) |
+| Layer                  | Technology                                                            |
+| ---------------------- | --------------------------------------------------------------------- |
+| Application            | Python 3.12, Flask 3, SQLAlchemy, Flask-WTF, Flask-Bcrypt, matplotlib |
+| WSGI server            | gunicorn                                                              |
+| Database               | SQLite (default) / any `DATABASE_URL`-compatible DB                   |
+| Testing                | pytest                                                                |
+| Containerization       | Docker (python:3.12-slim base)                                        |
+| CI                     | GitHub Actions                                                        |
+| Image registry         | Amazon ECR                                                            |
+| Orchestration          | Kubernetes (kind locally, AWS EKS in the cloud)                       |
+| Infrastructure-as-Code | Terraform (AWS VPC + EKS modules)                                     |
 
 ---
 
