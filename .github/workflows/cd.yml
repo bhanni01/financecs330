@@ -1,0 +1,70 @@
+name: CD
+
+# Run after code is pushed to main
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Only deploy if tests would pass — we re-run them here as a gate
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies and run tests
+        env:
+          FLASK_SECRET_KEY: ci-test-secret-key
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pytest tests/ -v
+
+      # Authenticate to AWS using the secrets stored in the repo
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Log Docker into ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build the image for amd64 (matches EKS nodes) and push to ECR.
+      # Tag with both the git commit SHA (unique, traceable) and latest.
+      - name: Build and push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO: financecs330
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --platform linux/amd64 \
+            -t $ECR_REGISTRY/$REPO:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$REPO:latest .
+          docker push $ECR_REGISTRY/$REPO:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$REPO:latest
+
+      # Connect kubectl to the EKS cluster
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --region us-east-1 --name finance
+
+      # Update the running deployment to the new image and wait for rollout
+      - name: Deploy to EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO: financecs330
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          kubectl set image deployment/finance-app \
+            finance=$ECR_REGISTRY/$REPO:$IMAGE_TAG
+          kubectl rollout status deployment/finance-app --timeout=120s
